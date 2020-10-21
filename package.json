@@ -13,6 +13,8 @@
     "@nuxt/typescript-runtime": "^2.0.0",
     "ant-design-vue": "^1.6.5",
     "core-js": "^3.6.5",
+    "dagre": "^0.8.5",
+    "diagram-maker": "^1.0.0",
     "nuxt": "^2.14.6"
   },
   "devDependencies": {
