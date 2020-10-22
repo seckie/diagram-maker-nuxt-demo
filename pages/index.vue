@@ -1,43 +1,20 @@
 <template>
   <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">
-        diagram-maker-demo
-      </h1>
-      <div id="diagram" />
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
-    </div>
+    <div id="diagram" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { ConnectorPlacement, DiagramMaker, DiagramMakerConfig, DiagramMakerNode } from 'diagram-maker';
+import { ConnectorPlacement, DiagramMaker, DiagramMakerConfig, DiagramMakerNode, DiagramMakerData } from 'diagram-maker';
 import 'diagram-maker/dist/diagramMaker.css';
-import { initialData } from './data';
+import { getInitialData } from './data';
 import RectangleNode from '../components/RectangleNode.vue';
+import { Action, Dispatch } from 'redux';
 
 function addDevTools() {
-  if (process.env.NODE_ENV === 'development') {
-    const windowAsAny: any = window;
+if (process.env.NODE_ENV === 'development') {
+  const windowAsAny: any = window;
     return windowAsAny.__REDUX_DEVTOOLS_EXTENSION__ && windowAsAny.__REDUX_DEVTOOLS_EXTENSION__();
   }
 }
@@ -52,7 +29,7 @@ export default Vue.extend({
   methods: {
     handleDiagramMakerChange() {
       const state = this.diagramMaker.store.getState();
-      console.log(state);
+      // console.log(state);
     },
     handleResize() {
       this.diagramMaker.updateContainer();
@@ -69,7 +46,6 @@ export default Vue.extend({
   },
 
   mounted() {
-    // const container = this.$refs.diagram;
     const container = 'diagram';
     const config = {
       renderCallbacks: {
@@ -82,15 +58,20 @@ export default Vue.extend({
       nodeTypeConfig: {
         'defaultNode': {
           size: { width: 100, height: 100 },
-          connectorPlacementOverride: ConnectorPlacement.CENTERED,
+          // connectorPlacementOverride: ConnectorPlacement.CENTERED,
         },
-      }
+      },
+      actionInterceptor: (action: Action, next: Dispatch<Action>, getState: () => DiagramMakerData<{}, {}>) => {
+        console.log(action);
+        next(action);
+      },
     };
     const optionalParams = {
       // { initialData, eventListener, consumerRootReducer, consumerEnhancer }
       consumerEnhancer: addDevTools(),
-      initialData,
+      initialData: getInitialData(),
     };
+
     this.diagramMaker = new DiagramMaker(
       container,
       config,
@@ -108,6 +89,10 @@ export default Vue.extend({
 </script>
 
 <style>
+.dm-canvas > svg {
+  left: 0;
+}
+
 .container {
   margin: 0 auto;
   min-height: 100vh;
@@ -145,5 +130,9 @@ export default Vue.extend({
 
 .links {
   padding-top: 15px;
+}
+
+#diagram {
+  position:
 }
 </style>
