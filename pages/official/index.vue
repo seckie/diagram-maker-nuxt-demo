@@ -24,6 +24,8 @@ import {
   createToolsPanel, createWorkspaceContextMenu, updateActionInLogger
 } from './utils';
 
+import RectangleNode from '../../components/RectangleNode.vue';
+
 const windowAsAny = window as any;
 
 export default Vue.extend({
@@ -41,15 +43,26 @@ export default Vue.extend({
     handleResize() {
       this.diagramMaker.updateContainer();
     },
-    // createNode(node: DiagramMakerNode<{}>, container: HTMLElement) {
-    //   return new Vue({
-    //     components: { RectangleNode },
-    //     el: container,
-    //     render(createElement) {
-    //       return createElement(RectangleNode);
-    //     },
-    //   }).$refs.rectangleNode as HTMLElement;
-    // }
+    createRectangleNode(node: DiagramMakerNode<{}>, container: HTMLElement) {
+      return new Vue({
+        components: { RectangleNode },
+        el: container,
+        render(createElement) {
+          return createElement(
+            RectangleNode, {
+              props: {
+                node,
+              },
+              on: {
+                change: function(ev: any) {
+                  console.log('catch event. value:', ev.target.value);
+                }
+              }
+            }
+          );
+        },
+      }).$refs.rectangleNode as HTMLElement;
+    }
   },
 
   mounted() {
@@ -71,7 +84,8 @@ export default Vue.extend({
             if (node.typeId === 'testId-dropdown') {
               return createNodeWithDropdown(node, container);
             }
-            return createRectangularNode(node, container);
+            return this.createRectangleNode(node, container);
+            // return createRectangularNode(node, container);
           },
           potentialNode: (node: DiagramMakerPotentialNode, container: HTMLElement) =>
             createPotentialNode(node, container),
@@ -147,19 +161,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@import './scss/index.scss';
 @import './scss/CircularNode.scss';
 @import './scss/Logger.scss';
 @import './scss/RectangularNode.scss';
-
-// .dm-canvas > svg {
-//   left: 0;
-// }
-
-.container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 100vh;
-}
 </style>

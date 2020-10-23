@@ -133,6 +133,5 @@ export default Vue.extend({
 }
 
 #diagram {
-  position:
 }
 </style>
